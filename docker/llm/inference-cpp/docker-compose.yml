@@ -1,0 +1,28 @@
+name: Ollama with Intel ipex-llm
+
+services:
+  ipex-cpp:
+    restart: always
+    container_name: intel-ipex-llm-interface
+    stdin_open: true
+    tty: true
+    devices:
+      - /dev/dri
+    network_mode: host
+    image: 'docker.io/intelanalytics/ipex-llm-inference-cpp-xpu:custom'
+    command: ['bash', '/llm/scripts/start-ollama.sh']
+    environment:
+      DEVICE: iGPU
+      OLLAMA_MAX_LOADED_MODELS: 3
+      OLLAMA_KEEP_ALIVE: -1
+      OLLAMA_HOST: 0.0.0.0
+      no_proxy: localhost,127.0.0.1
+      TZ: Europe/Warsaw
+    mem_limit: 63gb
+    shm_size: 32gb
+    ports:
+      - 11434:11434
+    volumes:
+      - /opt/llm/models-gguf:/models:Z
+      - /opt/llm/models-ollama:/root/.ollama:Z
+
